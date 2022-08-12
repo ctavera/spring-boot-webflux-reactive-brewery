@@ -78,6 +78,5 @@ class BeerControllerTest {
                 .expectStatus().isOk()
                 .expectBody(BeerDto.class)
                 .value(beerDto -> beerDto.getBeerName(), equalTo(validBeer.getBeerName()));
-
     }
 }
