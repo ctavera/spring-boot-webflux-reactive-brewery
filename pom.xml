@@ -10,11 +10,11 @@
     </parent>
 
     <groupId>guru.springframework</groupId>
-    <artifactId>sfg-reactive-brewery</artifactId>
+    <artifactId>spring-boot-webflux-reactive-brewery</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sfg-reactive-brewery</name>
+    <name>spring-boot-webflux-reactive-brewery</name>
 
-    <description>SFG Reactive Brewery</description>
+    <description>Reactive Brewery</description>
 
     <developers>
         <developer>
@@ -42,9 +42,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -54,6 +58,10 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-h2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
