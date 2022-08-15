@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 /**
  * Created by jt on 2019-05-25.
@@ -26,7 +26,8 @@ public class Beer {
 //    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
 //    @Type(type="org.hibernate.type.UUIDCharType")
 //    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
-    private UUID id;
+    @Id
+    private Integer id;
 
     @Version
     private Long version;
@@ -40,8 +41,8 @@ public class Beer {
 
 //    @CreationTimestamp
 //    @Column(updatable = false)
-    private Timestamp createdDate;
+    private LocalDateTime createdDate;
 
 //    @UpdateTimestamp
-    private Timestamp lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
 }
