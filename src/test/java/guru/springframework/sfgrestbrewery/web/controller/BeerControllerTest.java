@@ -46,7 +46,7 @@ class BeerControllerTest {
         List<BeerDto> beerDtos = Arrays.asList(validBeer);
         BeerPagedList validBeerPagedList = new BeerPagedList(beerDtos, PageRequest.of(1, 1), beerDtos.size());
 
-        given(beerService.listBeers(any(), any(), any(), any())).willReturn(validBeerPagedList);
+        given(beerService.listBeers(any(), any(), any(), any())).willReturn(Mono.just(validBeerPagedList));
 
         webTestClient.get().uri("/api/v1/beer")
                 .accept(MediaType.APPLICATION_JSON)
