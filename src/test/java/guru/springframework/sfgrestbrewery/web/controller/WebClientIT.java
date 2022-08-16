@@ -194,7 +194,8 @@ public class WebClientIT {
         Mono<ResponseEntity<Void>> responseEntityMono = webClient.post().uri("/api/v1/beer")
                 .accept(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(beerDto))
-                .retrieve().toBodilessEntity();
+                .retrieve()
+                .toBodilessEntity();
 
         responseEntityMono.publishOn(Schedulers.parallel()).doOnError(throwable -> {
             countDownLatch.countDown();
@@ -213,7 +214,8 @@ public class WebClientIT {
 
         Mono<BeerPagedList> beerPagedListMono = webClient.get().uri("/api/v1/beer")
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve().bodyToMono(BeerPagedList.class);
+                .retrieve()
+                .bodyToMono(BeerPagedList.class);
 
         beerPagedListMono.publishOn(Schedulers.parallel()).subscribe(beerPagedList -> {
 
@@ -233,7 +235,8 @@ public class WebClientIT {
 
         Mono<BeerPagedList> beerPagedListMono = webClient.get().uri(uriBuilder -> uriBuilder.path("/api/v1/beer").queryParam("pageSize", "5").build())
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve().bodyToMono(BeerPagedList.class);
+                .retrieve()
+                .bodyToMono(BeerPagedList.class);
 
         beerPagedListMono.publishOn(Schedulers.parallel()).subscribe(beerPagedList -> {
 
@@ -253,7 +256,8 @@ public class WebClientIT {
 
         Mono<BeerPagedList> beerPagedListMono = webClient.get().uri(uriBuilder -> uriBuilder.path("/api/v1/beer").queryParam("beerName", "Mango Bobs").build())
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve().bodyToMono(BeerPagedList.class);
+                .retrieve()
+                .bodyToMono(BeerPagedList.class);
 
         beerPagedListMono.publishOn(Schedulers.parallel()).subscribe(beerPagedList -> {
 
@@ -292,8 +296,8 @@ public class WebClientIT {
 
         Mono<BeerDto> beerDtoMono = webClient.get().uri("/api/v1/beer/1")
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve().
-                bodyToMono(BeerDto.class);
+                .retrieve()
+                .bodyToMono(BeerDto.class);
 
         beerDtoMono.subscribe(beerDto -> {
             assertThat(beerDto).isNotNull();
