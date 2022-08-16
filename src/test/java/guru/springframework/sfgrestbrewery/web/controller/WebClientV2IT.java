@@ -1,5 +1,6 @@
 package guru.springframework.sfgrestbrewery.web.controller;
 
+import guru.springframework.sfgrestbrewery.bootstrap.BeerLoader;
 import guru.springframework.sfgrestbrewery.web.functional.BeerRouterConfig;
 import guru.springframework.sfgrestbrewery.web.model.BeerDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,43 @@ public class WebClientV2IT {
                 .baseUrl(BASE_URL)
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.create().wiretap(true)))
                 .build();
+    }
+
+    @Test
+    void testGetBeerByUPC() throws InterruptedException {
+
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        Mono<BeerDto> beerDtoMono = webClient.get().uri(BeerRouterConfig.BEERUPC_V2_URL + "/" + BeerLoader.BEER_1_UPC)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(BeerDto.class);
+
+        beerDtoMono.subscribe(beerDto -> {
+            assertThat(beerDto).isNotNull();
+            assertThat(beerDto.getUpc()).isEqualTo(BeerLoader.BEER_1_UPC);
+
+            countDownLatch.countDown();
+        });
+
+        countDownLatch.await(2000, TimeUnit.MILLISECONDS);
+        assertThat(countDownLatch.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    void testGetBeerByUPCNotFound() throws InterruptedException {
+
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        Mono<BeerDto> beerDtoMono = webClient.get().uri(BeerRouterConfig.BEERUPC_V2_URL + "/546213656")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(BeerDto.class);
+
+        beerDtoMono.subscribe(beerDto -> {}, throwable -> countDownLatch.countDown());
+
+        countDownLatch.await(2000, TimeUnit.MILLISECONDS);
+        assertThat(countDownLatch.getCount()).isEqualTo(0);
     }
 
     @Test
