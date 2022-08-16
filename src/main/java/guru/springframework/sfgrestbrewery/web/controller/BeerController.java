@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -82,11 +83,21 @@ public class BeerController {
     }
 
     @PutMapping("beer/{beerId}")
-    public ResponseEntity<Void> updateBeerById(@PathVariable("beerId") Integer beerId, @RequestBody @Validated BeerDto beerDto){
+    public ResponseEntity<Void> updateBeerById(@PathVariable("beerId") Integer beerId, @RequestBody @Validated BeerDto beerDto) {
 
-        beerService.updateBeer(beerId, beerDto).subscribe();
+        AtomicBoolean atomicBooleanNotFound = new AtomicBoolean(false);
 
-        return ResponseEntity.noContent().build();
+        beerService.updateBeer(beerId, beerDto).subscribe(savedBeerDto -> {
+            if (savedBeerDto.getId() != null) {
+                atomicBooleanNotFound.set(true);
+            }
+        });
+
+        if (atomicBooleanNotFound.get()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("beer/{beerId}")
