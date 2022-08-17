@@ -22,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class WebClientV2IT {
@@ -36,6 +37,40 @@ public class WebClientV2IT {
                 .baseUrl(BASE_URL)
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.create().wiretap(true)))
                 .build();
+    }
+
+    @Test
+    void testDeleteBeer() throws InterruptedException {
+        Integer beerId = 3;
+        CountDownLatch countDownLatch = new CountDownLatch(2);
+
+        webClient.delete().uri(BeerRouterConfig.BEER_V2_URL + "/" + beerId)
+                .retrieve()
+                .toBodilessEntity()
+                .flatMap(voidResponseEntity -> {
+                    countDownLatch.countDown();
+
+                    return webClient.get().uri(BeerRouterConfig.BEER_V2_URL + "/" + beerId)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .retrieve()
+                            .bodyToMono(BeerDto.class);
+                }).subscribe(beerDto -> {}, throwable -> countDownLatch.countDown());
+
+        countDownLatch.await(1000, TimeUnit.MILLISECONDS);
+        assertThat(countDownLatch.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    void testDeleteBeerNotFound() {
+        Integer beerId = 4;
+
+        webClient.delete().uri(BeerRouterConfig.BEER_V2_URL + "/" + beerId)
+                .retrieve()
+                .toBodilessEntity()
+                .block();
+
+        assertThrows(WebClientResponseException.NotFound.class, () -> webClient.delete().uri(BeerRouterConfig.BEER_V2_URL + "/" + beerId)
+                    .retrieve().toBodilessEntity().block());
     }
 
     @Test
